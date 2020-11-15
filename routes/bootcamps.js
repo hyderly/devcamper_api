@@ -1,26 +1,22 @@
-const express = require('express');
-
+// Import external modules
+const express = require("express");
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.status(200).json({success: true, msg: 'Get all Bootcamps'})
-});
+// Import Route methods
+const {
+  getBootcamps,
+  getBootcamp,
+  createBootcamp,
+  updateBootcamp,
+  deleteBootcamp,
+} = require("../controllers/bootcamps");
 
-router.get('/:id', (req, res) => {
-    res.status(200).json({success: true, msg: `Get bootcamp with id ${req.params.id}`})
-});
+router.route("/").get(getBootcamps).post(createBootcamp);
 
-router.post('/', (req, res) => {
-    res.status(200).json({success: true, msg: 'Create Bootcamp'})
-});
-
-router.put('/:id', (req, res) => {
-    res.status(200).json({success: true, msg: `Update bootcamp with id ${req.params.id}`})
-});
-
-router.delete('/:id', (req, res) => {
-    res.status(200).json({success: true, msg: `Delete bootcamp with id ${req.params.id}`})
-});
-
+router
+  .route("/:id")
+  .get(getBootcamp)
+  .put(updateBootcamp)
+  .delete(deleteBootcamp);
 
 module.exports = router;
