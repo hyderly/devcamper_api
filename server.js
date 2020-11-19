@@ -13,6 +13,8 @@ connectDB();
 // Config App with express
 const app = express();
 
+app.use(express.json());
+
 // User logger middleware
 app.use(logger);
 
