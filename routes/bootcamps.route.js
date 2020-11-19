@@ -9,7 +9,7 @@ const {
   createBootcamp,
   updateBootcamp,
   deleteBootcamp,
-} = require("../controllers/bootcamps");
+} = require("../controllers/bootcamps.utils");
 
 router.route("/").get(getBootcamps).post(createBootcamp);
 
