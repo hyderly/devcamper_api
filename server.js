@@ -1,7 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const errorHandler = require("./middlewares/error");
 const connectDB = require("./config/db");
-const logger = require("./middlewares/logger");   // Import logger middleware
+const logger = require("./middlewares/logger"); // Import logger middleware
 const bootcampsRoute = require("./routes/bootcamps.route"); // Bootcamp Route
 
 // Config donenv
@@ -20,6 +21,9 @@ app.use(logger);
 
 // Routes middlewares
 app.use("/api/v1/bootcamps", bootcampsRoute);
+
+// ErrorHandler Custom Middleware
+app.use(errorHandler);
 
 // Initialize Port
 const PORT = process.env.PORT || 5000;
