@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
+const geocoder = require("../utils/geocoder");
+const key = require("../utils/geocoder");
 
 // match: we can only put relavent data thats match regex
 // trim : remove blank spaces
@@ -104,8 +106,30 @@ const bootcampSchema = new mongoose.Schema({
   },
 });
 
+// Create Slugify using mongoose middleware
 bootcampSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+// Create location using geocoder and mapquest
+bootcampSchema.pre("save", async function (next) {
+  const loc = await geocoder.geocode(this.address);
+
+  this.location = {
+    type: "points",
+    coordinates: [loc[0].longitude, loc[0].latitude],
+    formattedAddress: loc[0].formattedAddress,
+    street: loc[0].streetName,
+    city: loc[0].city,
+    state: loc[0].stateCode,
+    zip: loc[0].zipcode,
+    country: loc[0].countryCode,
+  };
+
+  // Don't save address in database
+  this.address = undefined;
+
   next();
 });
 
