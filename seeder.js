@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 
 // Import Models
 const Bootcamp = require("./models/Bootcamp");
+const Course = require("./models/Course");
 
 // Config global variables
 dotenv.config({ path: "./config/config.env" });
@@ -20,15 +21,20 @@ mongoose.connect(process.env.MONGO_URI, {
   useFindAndModify: false,
 });
 
-// Get bootcamps data
+// Get Bootcamps data
 const bootcamps = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/bootcamps.json`, "utf-8")
+);
+// Get Courses data
+const courses = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/courses.json`, "utf-8")
 );
 
 // Import data to Database
 const importData = async () => {
   try {
     await Bootcamp.create(bootcamps);
+    await Course.create(courses);
     console.log("Data Imported...");
 
     process.exit();
@@ -38,10 +44,10 @@ const importData = async () => {
 };
 
 // Delete data from the Database
-
 const deleteData = async () => {
   try {
     await Bootcamp.deleteMany();
+    await Course.deleteMany();
     console.log("Data Destroyed");
     process.exit();
   } catch (err) {

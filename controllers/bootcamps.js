@@ -55,6 +55,7 @@ const getBootcamps = asyncHandler(async (req, res, next) => {
   // Pagination Result
   const pagination = {};
 
+  // Display next
   if (endIndex < total) {
     pagination.next = {
       page: page + 1,
@@ -62,6 +63,7 @@ const getBootcamps = asyncHandler(async (req, res, next) => {
     };
   }
 
+  // Display previous
   if (startIndex > 0) {
     pagination.previous = {
       page: page - 1,
@@ -71,14 +73,12 @@ const getBootcamps = asyncHandler(async (req, res, next) => {
 
   // Execute Query
   const bootcamps = await query;
-  res
-    .status("200")
-    .json({
-      success: true,
-      count: bootcamps.length,
-      pagination,
-      data: bootcamps,
-    });
+  res.status("200").json({
+    success: true,
+    count: bootcamps.length,
+    pagination,
+    data: bootcamps,
+  });
 });
 
 // @des:   Get specific bootcamp
