@@ -32,7 +32,7 @@ const courseSchema = new mongoose.Schema({
   },
   bootcamp: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "bootcamp",
+    ref: "bootcamp", // ref to bootcamp collection
     required: true,
   },
 });

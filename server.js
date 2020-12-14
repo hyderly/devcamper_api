@@ -1,9 +1,10 @@
 const express = require("express");
-const dotenv = require("dotenv");
-const errorHandler = require("./middlewares/error");
-const connectDB = require("./config/db");
+const dotenv = require("dotenv"); // dotenv for global variable
+const errorHandler = require("./middlewares/error"); // custom error handlers
+const connectDB = require("./config/db"); // database connection
 const logger = require("./middlewares/logger"); // Import logger middleware
-const bootcampsRoute = require("./routes/bootcamps.route"); // Bootcamp Route
+const bootcampsRoute = require("./routes/bootcamps"); // Bootcamps Route
+const coursesRoute = require("./routes/courses"); // Courses Route
 
 // Config donenv
 dotenv.config({ path: "./config/config.env" });
@@ -21,6 +22,7 @@ app.use(logger);
 
 // Routes middlewares
 app.use("/api/v1/bootcamps", bootcampsRoute);
+app.use("/api/v1/courses", coursesRoute);
 
 // ErrorHandler Custom Middleware
 app.use(errorHandler);
