@@ -79,16 +79,16 @@ const createCourse = asyncHandler(async (req, res, next) => {
 });
 
 // @des:   Update Course
-// @route: POST /api/v1/courses/:id
+// @route: PUT /api/v1/courses/:id
 // @access: Private
 const updateCourse = asyncHandler(async (req, res, next) => {
-  const course = await Course.findById(req.params.id);
+  let course = await Course.findById(req.params.id);
 
   if (!course) {
     return next(new ErrorResponse(`Course not found with id ${req.params.id}`));
   }
 
-  course = await Course.update(req.params.id, req.body, {
+  course = await Course.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
   });
