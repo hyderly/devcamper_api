@@ -1,5 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv"); // dotenv for global variable
+const path = require('path')
+const fileupload = require("express-fileupload"); // express-fileupload package
+
 const errorHandler = require("./middlewares/error"); // custom error handlers
 const connectDB = require("./config/db"); // database connection
 const logger = require("./middlewares/logger"); // Import logger middleware
@@ -17,8 +20,13 @@ const app = express();
 
 app.use(express.json());
 
+// Set Static Folder
+app.use(express.static(path.join(__dirname, 'Public')));
+
 // User logger middleware
 app.use(logger);
+
+app.use(fileupload());
 
 // Routes middlewares
 app.use("/api/v1/bootcamps", bootcampsRoute);
