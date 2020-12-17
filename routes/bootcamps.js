@@ -10,8 +10,13 @@ const {
   updateBootcamp,
   deleteBootcamp,
   getBootcampsInRadius,
-  uploadBootcampPhoto
+  uploadBootcampPhoto,
 } = require("../controllers/bootcamps");
+
+const Bootcamp = require("../models/Bootcamp");
+
+// Import advanced results middleware
+const advancedResults = require("../middlewares/advancedResults");
 
 // Include other resource router
 const courseRoutes = require("./courses");
@@ -21,7 +26,10 @@ router.use("/:bootcampId/courses", courseRoutes);
 
 router.route("/radius/:zipcode/:distance").get(getBootcampsInRadius);
 
-router.route("/").get(getBootcamps).post(createBootcamp);
+router
+  .route("/")
+  .get(advancedResults(Bootcamp, "courses"), getBootcamps)
+  .post(createBootcamp);
 
 router.route("/:id/photo").put(uploadBootcampPhoto);
 
