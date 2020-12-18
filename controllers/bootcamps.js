@@ -134,10 +134,10 @@ const uploadBootcampPhoto = asyncHandler(async (req, res, next) => {
   file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
     if (err) {
       console.log(err);
-      return next(new ErrorResponse("Some Error with file upload", 500));
+      return next(new ErrorResponse("Error with file upload", 500));
     }
 
-    // Update Bootcamp phot field
+    // Update Bootcamp photo field
     await Bootcamp.findByIdAndUpdate(req.params.id, {
       photo: file.name,
     });
