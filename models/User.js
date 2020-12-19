@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true],
+    required: [true, 'Password is required'],
     minlength: 6,
     select: false, // Does not show password when get user from API
   },
@@ -47,5 +47,10 @@ userSchema.methods.getJwtToken = function () {
     expiresIn: process.env.JWT_EXP,
   });
 };
+
+// Compare user entered password with encrypted password in database
+userSchema.methods.matchPassword = function(enteredPassword){
+  return bcrypt.compare(enteredPassword, this.password);
+}
 
 module.exports = mongoose.model("user", userSchema);

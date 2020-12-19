@@ -2,17 +2,69 @@ const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middlewares/async");
 const User = require("../models/User");
 
+// @des:   POST Register User
+// @route: POST /api/v1/auth/register
+// @access: Public
 const register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role } = req.body;
   const user = await User.create({ name, email, password, role });
 
-  // Get JWT from methods
-  const token = user.getJwtToken();
-
-  res.status(200).json({
-    success: true,
-    token,
-  });
+  sendTokenResponse(user, 200, res);
 });
 
-module.exports = { register };
+// @des:   POST Login User
+// @route: POST /api/v1/auth/login
+// @access: Public
+const login = asyncHandler(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // Validate email and password
+  if (!email || !password) {
+    return next(
+      new ErrorResponse("Please provide and email and password", 400)
+    );
+  }
+
+  // Check user by email
+  const user = await User.findOne({ email }).select("+password");
+
+  if (!user) {
+    return next(new ErrorResponse("Wrong email or password"));
+  }
+
+  // Check password
+  const isMatch = await user.matchPassword(password);
+
+  if (!isMatch) {
+    return next(new ErrorResponse("Wrong email or password"));
+  }
+
+  sendTokenResponse(user, 200, res);
+});
+
+// Get token and response, Create cookie and sent it.
+const sendTokenResponse = function (user, statusCode, res) {
+  // Create Token
+  const token = user.getJwtToken();
+
+  const options = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXP * 30 * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === "production") {
+    options.secure = true;
+  }
+
+  res
+    .status(statusCode)
+    .cookie("token", token, options) // key value options
+    .json({
+      success: true,
+      token,
+    });
+};
+
+module.exports = { register, login };
