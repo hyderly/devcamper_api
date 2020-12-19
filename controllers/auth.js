@@ -4,15 +4,14 @@ const User = require("../models/User");
 
 const register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role } = req.body;
-
-  // Create User
   const user = await User.create({ name, email, password, role });
 
+  // Get JWT from methods
+  const token = user.getJwtToken();
+
   res.status(200).json({
-    name,
-    email,
-    password,
-    role,
+    success: true,
+    token,
   });
 });
 
