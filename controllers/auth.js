@@ -60,11 +60,23 @@ const sendTokenResponse = function (user, statusCode, res) {
 
   res
     .status(statusCode)
-    .cookie("token", token, options) // key value options
+    .cookie("token", token, options) // key - value - options
     .json({
       success: true,
       token,
     });
 };
 
-module.exports = { register, login };
+// @des:   GET logged in user
+// @route: POST /api/v1/auth/me
+// @access: Private
+const getMe = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  res.send({
+    success: true,
+    data: user,
+  });
+});
+
+module.exports = { register, login, getMe };
