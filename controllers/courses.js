@@ -26,7 +26,6 @@ const getCourses = asyncHandler(async (req, res, next) => {
 // @des:   Get Single Course
 // @route: GET /api/v1/courses/:id
 // @access: Public
-
 const getCourse = asyncHandler(async (req, res, next) => {
   const course = await Course.findById(req.params.id).populate({
     path: "bootcamp",
@@ -45,17 +44,27 @@ const getCourse = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @des:   Create Bootcamp
+// @des:   Create Course with bootcamp id
 // @route: POST /api/v1/bootcamps/:bootcampId/courses
 // @access: Private
 const createCourse = asyncHandler(async (req, res, next) => {
   req.body.bootcamp = req.params.bootcampId;
+  req.body.user = req.user.id;
 
   const bootcamp = await Bootcamp.findById(req.params.bootcampId);
 
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp not found with id ${req.params.bootcampId}`)
+    );
+  }
+
+  // Check bootcamp owner and only give access to owner
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `User with id ${req.user.id} is not autherized to add a course to ${bootcamp._id}`
+      )
     );
   }
 
@@ -77,6 +86,15 @@ const updateCourse = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`Course not found with id ${req.params.id}`));
   }
 
+  // Check course owner and only give access to owner
+  if (course.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `User with id ${req.user.id} is not autherized to Update course`
+      )
+    );
+  }
+
   course = await Course.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -96,6 +114,15 @@ const deleteCourse = asyncHandler(async (req, res, next) => {
 
   if (!course) {
     return next(new ErrorResponse(`Course not found with id ${req.params.id}`));
+  }
+
+  // Check course owner and only give access to owner
+  if (course.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `User with id ${req.user.id} is not autherized to Delete course`
+      )
+    );
   }
 
   await course.remove();

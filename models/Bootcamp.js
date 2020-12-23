@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
 const geocoder = require("../utils/geocoder");
-const Course = require("./Course")
+const Course = require("./Course");
 const key = require("../utils/geocoder");
 
 // match: we can only put relavent data thats match regex
@@ -66,7 +66,7 @@ const bootcampSchema = new mongoose.Schema(
 
     careers: {
       type: [String],
-      require: true,
+      required: true,
       enum: [
         "Web Development",
         "Mobile Development",
@@ -106,6 +106,11 @@ const bootcampSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user", // ref to user collection
+      required: true,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -140,7 +145,6 @@ bootcampSchema.pre("save", async function (next) {
   next();
 });
 
-
 // If a bootcamps remove all associated courses will automatically delete
 bootcampSchema.pre("remove", async function (next) {
   console.log(
@@ -157,7 +161,5 @@ bootcampSchema.virtual("courses", {
   foreignField: "bootcamp",
   justOne: false,
 });
-
-
 
 module.exports = mongoose.model("bootcamp", bootcampSchema);
